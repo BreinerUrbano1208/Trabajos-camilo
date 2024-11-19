@@ -1,0 +1,135 @@
+'''
+Problema:
+    Codigo diseñado en el lenguaje de Pyton
+planificación: 
+    inicio de seccion 
+    muestra menu de opciones x
+    da opciones de elegir
+
+#SEGUNDA ENTREGA: VECTORES, MATRICES, ORDENAMIENTO, BUSQUEDA
+PLANIFICACION:
+    ° vectores: implementé un cambio en la parte de mostrar el menú en un conjunto más ordenado
+    ° matriz : hice la opcion de dar al usuario el menú en una matriz según la cantidad de productos que desea
+    ° ordenamiento: imorementé el metodo de ordenamiento por selección para dar los pedidios hechos por el usuariio de forma acendente 
+    ° busqueda: se implementó una funcion para que el usuario cotice (busque) un producto especifico de la lista que ha realizado
+'''
+from colorama import Fore, init
+init(autoreset=True)
+
+def eliminar_pedido(pedidos, producto):
+    for pedido in pedidos:
+        if pedido[1].lower() == producto.lower():
+            pedidos.remove(pedido)
+            print(Fore.GREEN + f"Pedido eliminado: {pedido[1]}")
+            return print(Fore.RED + f"No se encontró el producto: {producto} para eliminar")
+
+def mostrar_menu(menu):
+    while True:
+        for i, (opcion,precio) in enumerate(menu, start=1):
+            print(f'{i}. {opcion} - {precio}')
+        while True:
+            opcion = input(Fore.GREEN + '\nSelecciona una opción del menú (entre 1 y 9): ')
+            try:
+                opcion = int(opcion)
+                if 1 <= opcion <= len(menu):
+                    return menu [opcion - 1]
+                else:
+                    print(Fore.RED + 'LO SENTIMOS, TU ELECCIÓN NO SE ENCUENTRA EN EL MENÚ')
+            except ValueError:
+                print(Fore.GREEN + 'Por favor, introduce una opción válida del menú')
+
+def metodo_ordenamiento(pedidos):
+    ordenar_pedido = len(pedidos)
+    for i in range(ordenar_pedido):
+        precio_menor = i
+        for j in range(i + 1, ordenar_pedido):
+            if float(pedidos[j][2].split()[0]) < float(pedidos[precio_menor][2].split()[0]):
+                precio_menor = j
+        pedidos[i], pedidos[precio_menor] = pedidos[precio_menor], pedidos[i]
+#Funcion de busqueda 
+def metodo_de_busqueda(pedidos,termino):
+    resultados = []
+    for pedido in pedidos:
+        if termino.lower() in pedido[1].lower():
+            resultados.append(pedido)
+    return resultados 
+
+nombre = input(Fore.GREEN + 'Ingresa tu nombre para comenzar: ')
+contraseña = 'Comida'
+
+if contraseña == 'Comida':
+    print(Fore.BLUE + '\n¡HOLA!', nombre)
+    print(Fore.YELLOW + 'En nuestro menú te podemos ofrecer')
+    print(Fore.BLUE + '\n===== MENÚ =====')
+
+    menu = [('Hamburguesa', '8.20 UDS'),
+    ('Salchipapa', '4.00 USD',),
+    ('Desayuno', '7.32 USD'),
+    ('Almuerzo', '7.80 USD'),
+    ('Cena', '7.50 USD'),
+    ('Coca-cola', '3.35 USD'),
+    ('Café', '3.10 USD'),
+    ('Cerveza', '4.00 USD'),
+    ('Jugo Natural', '3.30 USD')]
+    
+    pedidos = []
+    total = 0
+    while True:
+    
+        pedido = mostrar_menu(menu)
+        precio = float (pedido[1].split()[0])
+        total += precio
+        pedidos.append([nombre, pedido[0], pedido[1]])
+        opcion = input(Fore.GREEN + '¿Deseas algo más? Respuestas (si/no/eliminar): ').strip().lower()
+        print('\n')
+        if opcion == 'eliminar':
+            print(Fore.YELLOW + '\nPEDIDOS SIN METODO DE ORDENAMIENTO')
+            print(Fore.BLUE + '\n =========== Registro de pedidos ===========')
+            print(Fore.BLUE + '|   Usuario   |    Producto    |   Precio   |')
+            print(Fore.BLUE + '---------------------------------------------')
+            for pedido in pedidos:
+                print(Fore.BLUE + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}') 
+            eliminar_producto = input(Fore.YELLOW + 'ingresa el nombre del producto que deseas eliminar')
+            eliminar_pedido (pedidos, eliminar_producto)
+            
+        elif opcion != 'si':
+            break
+        
+
+    print(Fore.YELLOW + '\nPEDIDOS SIN METODO DE ORDENAMIENTO')
+    print(Fore.BLUE + '\n =========== Registro de pedidos ===========')
+    print(Fore.BLUE + '|   Usuario   |    Producto    |   Precio   |')
+    print(Fore.BLUE + '---------------------------------------------')
+    for pedido in pedidos:
+        print(Fore.BLUE + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')  
+    print(Fore.BLUE + '---------------------------------------------')
+    print(Fore.BLUE + f'Total:{total:.2f} USD\n')
+    
+    metodo_ordenamiento(pedidos)
+    print(Fore.LIGHTBLUE_EX + '\nPEDIDOS CON METODO DE ORDENAMIENTO')
+    print(Fore.YELLOW + '\n =========== Registro de pedidos ===========')
+    print(Fore.YELLOW + '|   Usuario   |    Producto    |   Precio   |')
+    print(Fore.YELLOW + '---------------------------------------------')
+    for pedido in pedidos:
+        print(Fore.YELLOW + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')  
+    print(Fore.YELLOW + '---------------------------------------------')
+    print(Fore.YELLOW + f'Total:{total:.2f} USD\n')
+    
+    buscar = input (Fore.GREEN + 'Busca algun producto que esté dentro de tu pedido (si,no): ').strip().lower()
+    if buscar == 'si':
+        elemento_buscar = input(Fore.GREEN + 'Informacion del producto que deseas en pedido: ')
+        resultado = metodo_de_busqueda(pedidos, elemento_buscar)
+        if resultado:
+            print(Fore.MAGENTA + '\nMETODO DE BUSQUEDA')
+            print(Fore.LIGHTRED_EX + '\n =========== Registro de pedidos ===========')
+            print(Fore.LIGHTRED_EX + '|   Usuario   |    Producto    |   Precio   |')
+            print(Fore.LIGHTRED_EX + '---------------------------------------------')
+            for pedido in resultado:
+                 print(Fore.LIGHTRED_EX + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
+            print(Fore.LIGHTRED_EX + '---------------------------------------------') 
+        else:
+            print(Fore.LIGHTWHITE_EX + f'No se encontraron elementos con el el nombre"{elemento_buscar}" en tu pedido')
+
+    print(Fore.YELLOW + '<<<<<<< Fin del programa >>>>>>>')
+else:
+    print(Fore.RED + 'Su contraseña no es correcta')
