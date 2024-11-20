@@ -13,6 +13,10 @@ PLANIFICACION:
     ° matriz : hice la opcion de dar al usuario el menú en una matriz según la cantidad de productos que desea
     ° ordenamiento: imorementé el metodo de ordenamiento por selección para dar los pedidios hechos por el usuariio de forma acendente 
     ° busqueda: se implementó una funcion para que el usuario cotice (busque) un producto especifico de la lista que ha realizado
+
+ #3 entrega: clases, archivo json
+    ° clases: se crearon nuevas funciones añade productos a un listado y se creo una clase que almacena el menu 
+    ° archivo json: se creo una funcion que almacena cada pedido de registro se almacena en un archivo diferente 
 '''
 import json
 from colorama import Fore, init
@@ -21,11 +25,9 @@ init(autoreset=True)
 class Plato:
     def __init__(self, nombre, precio):
         self.nombre = nombre
-        self.precio = float(precio)  # Asegúrate de que el precio sea un número flotante
-
+        self.precio = float(precio) 
     def __repr__(self):
-        return f"{self.nombre} - {self.precio:.2f} USD"  # Muestra el precio con 2 decimales
-
+        return f"{self.nombre} - {self.precio:.2f} USD"  
     @staticmethod
     def obtener_menu():
         return [
@@ -42,7 +44,7 @@ class Plato:
 
 def mostrar_menu(menu):
     while True:
-        # Mostrar el menú con las opciones
+
         for i, plato in enumerate(menu, start=1):
             print(f'{i}. {plato.nombre} - {plato.precio:.2f} UDS')
         
@@ -69,7 +71,7 @@ def metodo_ordenamiento(pedidos):
 def metodo_de_busqueda(pedidos, termino):
     resultados = []
     for pedido in pedidos:
-        if termino.lower() in pedido.nombre.lower():  # Buscar en el nombre del plato
+        if termino.lower() in pedido.nombre.lower(): 
             resultados.append(pedido)
     return resultados
 
@@ -114,16 +116,16 @@ if contraseña == 'Comida':
     print(Fore.YELLOW + 'En nuestro menú te podemos ofrecer')
     print(Fore.BLUE + '\n===== MENÚ =====')
 
-    opciones_menu = Plato.obtener_menu()  # Obtener el menú de platos
+    opciones_menu = Plato.obtener_menu() 
 
     total = 0
     pedidos = []
 
     while True:
-        pedido = mostrar_menu(opciones_menu)  # Mostrar el menú y seleccionar un plato
+        pedido = mostrar_menu(opciones_menu)  
         total += pedido.precio
-        pedidos.append(pedido)  # Agregar el pedido a la lista
-        guardar_pedido(pedidos)  # Guardar los pedidos
+        pedidos.append(pedido) 
+        guardar_pedido(pedidos)  
 
         opcion = input(Fore.GREEN + '¿Deseas algo más? (si/no): ').strip().lower()
         if opcion != 'si':
@@ -138,7 +140,7 @@ if contraseña == 'Comida':
     print(Fore.BLUE + '---------------------------------------------')
     print(Fore.GREEN + f'Total: {total:.2f} UDS\n')
 
-    metodo_ordenamiento(pedidos)  # Ordenar los pedidos por precio
+    metodo_ordenamiento(pedidos) 
     print(Fore.LIGHTBLUE_EX + '\nPEDIDOS CON METODO DE ORDENAMIENTO')
     print(Fore.YELLOW + '\n =========== Registro de pedidos ===========')
     print(Fore.YELLOW + '|   Usuario   |    Producto    |   Precio   |')
