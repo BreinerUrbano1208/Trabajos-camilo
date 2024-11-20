@@ -1,17 +1,6 @@
 [
-    [
-        "camilo",
-        "Desayuno",
-        "7.32 USD"
-    ],
-    [
-        "camilo",
-        "Cerveza",
-        "4.00 USD"
-    ],
-    [
-        "camilo",
-        "Almuerzo",
-        "7.80 USD"
-    ]
+    {
+        "nombre": "Hamburguesa",
+        "precio": 8.2
+    }
 ]

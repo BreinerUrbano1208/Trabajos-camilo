@@ -18,10 +18,34 @@ import json
 from colorama import Fore, init
 init(autoreset=True)
 
+class Plato:
+    def __init__(self, nombre, precio):
+        self.nombre = nombre
+        self.precio = float(precio)  # Asegúrate de que el precio sea un número flotante
+
+    def __repr__(self):
+        return f"{self.nombre} - {self.precio:.2f} USD"  # Muestra el precio con 2 decimales
+
+    @staticmethod
+    def obtener_menu():
+        return [
+            Plato('Hamburguesa', 8.20),
+            Plato('Salchipapa', 4.00),
+            Plato('Desayuno', 7.32),
+            Plato('Almuerzo', 7.80),
+            Plato('Cena', 7.50),
+            Plato('Coca-cola', 3.35),
+            Plato('Café', 3.10),
+            Plato('Cerveza', 4.00),
+            Plato('Jugo Natural', 3.30)
+        ]
+
 def mostrar_menu(menu):
     while True:
-        for i, (opcion, precio) in enumerate(menu, start=1):
-            print(f'{i}. {opcion} - {precio}')
+        # Mostrar el menú con las opciones
+        for i, plato in enumerate(menu, start=1):
+            print(f'{i}. {plato.nombre} - {plato.precio:.2f} UDS')
+        
         while True:
             opcion = input(Fore.GREEN + '\nSelecciona una opción del menú: ')
             try:
@@ -38,43 +62,42 @@ def metodo_ordenamiento(pedidos):
     for i in range(ordenar_pedido):
         precio_menor = i
         for j in range(i + 1, ordenar_pedido):
-            if float(pedidos[j][2].split()[0]) < float(pedidos[precio_menor][2].split()[0]):
+            if pedidos[j].precio < pedidos[precio_menor].precio:
                 precio_menor = j
         pedidos[i], pedidos[precio_menor] = pedidos[precio_menor], pedidos[i]
 
 def metodo_de_busqueda(pedidos, termino):
     resultados = []
     for pedido in pedidos:
-        if termino.lower() in pedido[1].lower():
+        if termino.lower() in pedido.nombre.lower():  # Buscar en el nombre del plato
             resultados.append(pedido)
     return resultados
 
 def guardar_pedido(pedidos):
     with open('guardar_pedido.json', 'w') as archivo:
-        json.dump(pedidos, archivo, indent=4)
+        json.dump([p.__dict__ for p in pedidos], archivo, indent=4)
 
 def eliminar_pedido(pedidos):
     print(Fore.RED + '\n===== Eliminar Pedido =====')
-    print(Fore.RED + '|   Usuario   |    Producto    |   Precio   |')
-    print(Fore.RED + '---------------------------------------------')
+    print(Fore.RED + '|   Producto  |    Precio    |')
+    print(Fore.RED + '------------------------------')
     for i, pedido in enumerate(pedidos, start=1):
-        print(Fore.RED + f'{i}. {pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
-    print(Fore.RED + '---------------------------------------------')
+        print(Fore.RED + f'{i}. {pedido.nombre:<12} | {pedido.precio:.2f} UDS')
+    print(Fore.RED + '------------------------------')
 
     while True:
         try:
             eliminar = int(input(Fore.GREEN + 'Selecciona el número del pedido que deseas eliminar: '))
             if 1 <= eliminar <= len(pedidos):
                 pedido_eliminado = pedidos.pop(eliminar - 1)
-                print(Fore.GREEN + f'Pedido eliminado: {pedido_eliminado[1]}')
-                print(Fore.YELLOW + '\n =========== Registro de pedidos ===========')
-                print(Fore.YELLOW + '|   Usuario   |    Producto    |   Precio   |')
-                print(Fore.YELLOW + '---------------------------------------------')
+                print(Fore.RED + f'Pedido eliminado: {pedido_eliminado.nombre}')
+                print(Fore.YELLOW + '\n === Registro de pedidos ===')
+                print(Fore.YELLOW + '|   prodcto  |    Precio    |')
+                print(Fore.YELLOW + '-----------------------------')
                 for pedido in pedidos:
-                    print(Fore.YELLOW + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
-                print(Fore.YELLOW + '---------------------------------------------')
-                print(Fore.YELLOW + f'Total:{total:.2f} USD\n')
-
+                    print(Fore.YELLOW + f'{pedido.nombre:<12} | {pedido.precio:.2f} UDS')
+                print(Fore.YELLOW + '-----------------------------')
+                print(Fore.GREEN + f'Total: {total:.2f} UDS\n')
                 guardar_pedido(pedidos)
                 break
             else:
@@ -82,6 +105,7 @@ def eliminar_pedido(pedidos):
         except ValueError:
             print(Fore.RED + 'Por favor, introduce un número válido.')
 
+# Iniciar el programa
 nombre = input(Fore.GREEN + 'Ingresa tu nombre para comenzar: ')
 contraseña = 'Comida'
 
@@ -90,26 +114,18 @@ if contraseña == 'Comida':
     print(Fore.YELLOW + 'En nuestro menú te podemos ofrecer')
     print(Fore.BLUE + '\n===== MENÚ =====')
 
-    menu = [('Hamburguesa', '8.20 UDS'),
-            ('Salchipapa', '4.00 USD'),
-            ('Desayuno', '7.32 USD'),
-            ('Almuerzo', '7.80 USD'),
-            ('Cena', '7.50 USD'),
-            ('Coca-cola', '3.35 USD'),
-            ('Café', '3.10 USD'),
-            ('Cerveza', '4.00 USD'),
-            ('Jugo Natural', '3.30 USD')]
+    opciones_menu = Plato.obtener_menu()  # Obtener el menú de platos
 
-    pedidos = []
     total = 0
+    pedidos = []
+
     while True:
-        pedido = mostrar_menu(menu)
-        precio = float(pedido[1].split()[0])
-        total += precio
-        pedidos.append([nombre, pedido[0], pedido[1]])
-        guardar_pedido(pedidos)  
+        pedido = mostrar_menu(opciones_menu)  # Mostrar el menú y seleccionar un plato
+        total += pedido.precio
+        pedidos.append(pedido)  # Agregar el pedido a la lista
+        guardar_pedido(pedidos)  # Guardar los pedidos
+
         opcion = input(Fore.GREEN + '¿Deseas algo más? (si/no): ').strip().lower()
-        print('\n')
         if opcion != 'si':
             break
 
@@ -118,19 +134,19 @@ if contraseña == 'Comida':
     print(Fore.BLUE + '|   Usuario   |    Producto    |   Precio   |')
     print(Fore.BLUE + '---------------------------------------------')
     for pedido in pedidos:
-        print(Fore.BLUE + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
+        print(Fore.BLUE + f'{nombre:<12} | {pedido.nombre:<15} | {pedido.precio:.2f} UDS')
     print(Fore.BLUE + '---------------------------------------------')
-    print(Fore.GREEN + f'Total:{total:.2f} USD\n')
+    print(Fore.GREEN + f'Total: {total:.2f} UDS\n')
 
-    metodo_ordenamiento(pedidos)
+    metodo_ordenamiento(pedidos)  # Ordenar los pedidos por precio
     print(Fore.LIGHTBLUE_EX + '\nPEDIDOS CON METODO DE ORDENAMIENTO')
     print(Fore.YELLOW + '\n =========== Registro de pedidos ===========')
     print(Fore.YELLOW + '|   Usuario   |    Producto    |   Precio   |')
     print(Fore.YELLOW + '---------------------------------------------')
     for pedido in pedidos:
-        print(Fore.YELLOW + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
+        print(Fore.YELLOW + f'{nombre:<12} | {pedido.nombre:<15} | {pedido.precio:.2f} UDS')
     print(Fore.YELLOW + '---------------------------------------------')
-    print(Fore.GREEN + f'Total:{total:.2f} USD\n')
+    print(Fore.GREEN + f'Total: {total:.2f} UDS\n')
 
     eliminar = input(Fore.GREEN + '¿Deseas eliminar algún pedido? (si/no): ').strip().lower()
     if eliminar == 'si':
@@ -146,11 +162,12 @@ if contraseña == 'Comida':
             print(Fore.LIGHTRED_EX + '|   Usuario   |    Producto    |   Precio   |')
             print(Fore.LIGHTRED_EX + '---------------------------------------------')
             for pedido in resultado:
-                print(Fore.LIGHTRED_EX + f'{pedido[0]:<12} | {pedido[1]:<15} | {pedido[2]}')
+                print(Fore.LIGHTRED_EX + f'{nombre:<12} | {pedido.nombre:<15} | {pedido.precio:.2f} UDS')
             print(Fore.LIGHTRED_EX + '---------------------------------------------')
         else:
             print(Fore.LIGHTWHITE_EX + f'No se encontraron elementos con el nombre "{elemento_buscar}" en tu pedido')
 
     print(Fore.YELLOW+ '<<<<<<< Fin del programa >>>>>>>')
+
 else:
     print(Fore.RED + 'Su contraseña no es correcta')
